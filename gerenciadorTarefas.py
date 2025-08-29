@@ -30,7 +30,6 @@ def excluirTarefa():
         print("Tarefa excluída com sucesso!")
     else:
         print("ID inválido!")
-
     
 while condicao:
 
