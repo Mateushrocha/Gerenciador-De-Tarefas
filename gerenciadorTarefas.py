@@ -1,22 +1,33 @@
+import json 
+
 condicao = True
-bancoDeDados = ["estudar", "trabalhar", "caminhar"] 
+bd = []
 #banco de dados a principio deveria ficar vazio, porem afim de teste deixe ele com valores ficticio
 bancoDeDadosTarefasConcluidas = ["tarefa 1", "tarefa 2", "tarefa 3", "tarefa 4"]
+nome_arquivo = "bancoDeDados.json"
+
+with open(nome_arquivo, "r", encoding="utf-8") as arquivo:
+    bd = json.load(arquivo)
+
+def atualizarBd():
+    with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+        json.dump(bd, arquivo, indent=4)
 
 def adicionarTarefa():
     if tarefa != "":
-        if tarefa in bancoDeDados:
+        if tarefa in bd:
             print("Essa tarefa ja foi adicionada anteriormente! Digite um valor valido.")
             return
 
         print(f"Sua tarefa é: {tarefa}")
 
-        bancoDeDados.append(tarefa)
+        bd.append(tarefa)
+        atualizarBd()
     else:
         print("Escreva uma tarefa valida!")
 
 def listarTarefas():
-    for x in bancoDeDados:
+    for x in bd:
         print(x)
     
     verificacao = True
@@ -27,7 +38,7 @@ def listarTarefas():
         concluiu = input("Digite aqui:")
 
         if concluiu == "1":
-            for y, x in enumerate(bancoDeDados):
+            for y, x in enumerate(bd):
                 print(f"id {y + 1} - {x}")
             try:
                 tarefaConcluidaId = int(input("Digite o id da tarefa concluida")) - 1
@@ -35,13 +46,13 @@ def listarTarefas():
                 print("Digite um id valido!")
                 continue
 
-            if tarefaConcluidaId > len(bancoDeDados):
+            if tarefaConcluidaId > len(bd):
                 print("Digite um id valido!")
                 continue
-            if tarefaConcluidaId <= len(bancoDeDados):
-                bancoDeDadosTarefasConcluidas.append(bancoDeDados[tarefaConcluidaId])
-                del bancoDeDados[tarefaConcluidaId]
-        if concluiu == "2":
+            if tarefaConcluidaId <= len(bd):
+                bancoDeDadosTarefasConcluidas.append(bd[tarefaConcluidaId])
+                del bd[tarefaConcluidaId]
+        elif concluiu == "2":
             verificacao = False
         else:
             print("Digite uma opção valida!")
@@ -59,12 +70,12 @@ def listarTarefasConcluida():
         if escolha == "1":
             retornaTarefa()
             condicao == False
-        if escolha == "2":
-            ...
-        if escolha == "3":
+        elif escolha == "2":
+            adicionarTarefaNovamente()
+        elif escolha == "3":
             break
         else:
-            ...
+            print("Escolha uma opção valida!")
 
 def retornaTarefa():
     print( 10* "__")
@@ -79,29 +90,35 @@ def retornaTarefa():
         """Esse "1" foi adicionado anteriormnte e agora esta sendo retirado afim de ficar 
         visualmente  mais atrativo ao usuario e o id começar em 1 ao inves de 0 """
         if escolha <= len(bancoDeDadosTarefasConcluidas):
-            bancoDeDados.append(bancoDeDadosTarefasConcluidas[escolha])
+            bd.append(bancoDeDadosTarefasConcluidas[escolha])
             del bancoDeDadosTarefasConcluidas[escolha]
             return
     except:
         print("Digite uma opção valida")
         return
     
-"""
-Duas novas opções:
-adicionar novamente a tarefa que ja foi concluida, caso ele conclua ela nova mente 
-ter a opção de adicionar mais uma vez a tarefa concluida, para concluir mais uma vez 
-"""
+def adicionarTarefaNovamente(): 
+    print("Qual tarefa você quer adicionar novamente?")
+    for y, x in enumerate(bancoDeDadosTarefasConcluidas):
+        print(f" id {y + 1} - {x}")
+    escolha = input("Digite aqui o id: ")
+    print(15* "__")
+    try:
+        escolha = int(escolha)
+        bd.append(bancoDeDadosTarefasConcluidas[escolha])
+    except:
+        print("Digite um valor valido")
 
 def excluirTarefa():
     print("Escolha a tarefa que deseja excluir: ")
     
-    for i, x in enumerate(bancoDeDados):
+    for i, x in enumerate(bd):
         print(f"id {i}: {x}")
     
     tarefaExcluir = int(input("Digite o id da tarefa: "))  
     
-    if 0 <= tarefaExcluir < len(bancoDeDados):
-        del bancoDeDados[tarefaExcluir]
+    if 0 <= tarefaExcluir < len(bd):
+        del bd[tarefaExcluir]
         print("Tarefa excluída com sucesso!")
     else:
         print("ID inválido!")
@@ -110,7 +127,7 @@ def editarTarefa():
     verificao = True
     while verificao:
         print("Selecione a tarefa que deseja alterar:")
-        for i, x in enumerate(bancoDeDados):
+        for i, x in enumerate(bd):
             print(f"{i} - {x}")
     
         tarefaEditar = input("Qual tarefa deseja editar: ")
@@ -121,11 +138,11 @@ def editarTarefa():
             continue
 
         newTarefa = input("Digite a nova tarefa: ")
-        if newTarefa in bancoDeDados:
+        if newTarefa in bd:
             print("Digite uma tarefa que nao foi adicionada!")
             continue
         else:
-            bancoDeDados[tarefaEditar] = newTarefa
+            bd[tarefaEditar] = newTarefa
             verificao = False
     
 while condicao:
@@ -150,32 +167,33 @@ while condicao:
         adicionarTarefa()
 
     #if responsavel por mostrar as tarefas na tela
-    if opcao == "2":
+    elif opcao == "2":
         listarTarefas()
     
     #if responsavel em excluir tarefas 
-    if opcao == "3":
+    elif opcao == "3":
         excluirTarefa()
 
     #if responsael por editar tarefas 
-    if opcao == "4":
+    elif opcao == "4":
         editarTarefa()
 
     #if responsavel em listar as tarefas editadas
-    if opcao == "5":
+    elif opcao == "5":
         listarTarefasConcluida()
 
     #if responsavel em finalizar 
-    if opcao == "6":
+    elif opcao == "6":
         print("Tem certeza que quer sair mesmo?")
         escolha = input("S - sim | N - não")
         if escolha == "S" or escolha == "s":
             condicao = False
             print("Saindo...")
-        if escolha == "N" or "n":
+        elif escolha == "N" or "n":
             print("Que bom que decidiu ficar!")
         else:
             print("Digite um valor valido!")
     
     else:
         ("Digite uma opção valida!")
+
