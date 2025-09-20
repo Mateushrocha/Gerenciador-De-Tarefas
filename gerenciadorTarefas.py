@@ -2,16 +2,31 @@ import json
 
 condicao = True
 bd = []
-#banco de dados a principio deveria ficar vazio, porem afim de teste deixe ele com valores ficticio
-bancoDeDadosTarefasConcluidas = ["tarefa 1", "tarefa 2", "tarefa 3", "tarefa 4"]
+bdTarefasConcluida = []
 nome_arquivo = "bancoDeDados.json"
+nome_arquivo_bd2 = "bancoDeDadosTarefasConcluidas.json"
 
-with open(nome_arquivo, "r", encoding="utf-8") as arquivo:
-    bd = json.load(arquivo)
+try:
+    with open(nome_arquivo, "r", encoding="utf-8") as arquivo:
+        bd = json.load(arquivo)
+except:
+    with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+        json.dump(bd, arquivo, indent=4)
+
+try:
+    with open(nome_arquivo_bd2, "r", encoding="utf-8") as arquivo:
+        bdTarefasConcluida = json.load(arquivo)
+except:
+    with open(nome_arquivo_bd2, "w", encoding="utf-8") as arquivo:
+        json.dump(bdTarefasConcluida, arquivo, indent=4)
 
 def atualizarBd():
     with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
         json.dump(bd, arquivo, indent=4)
+
+def atualizarBdConluido():
+    with open(nome_arquivo_bd2, "w", encoding="utf-8") as arquivo:
+        json.dump(bdTarefasConcluida, arquivo, indent=4)
 
 def adicionarTarefa():
     if tarefa != "":
@@ -50,8 +65,9 @@ def listarTarefas():
                 print("Digite um id valido!")
                 continue
             if tarefaConcluidaId <= len(bd):
-                bancoDeDadosTarefasConcluidas.append(bd[tarefaConcluidaId])
+                bdTarefasConcluida.append(bd[tarefaConcluidaId])
                 del bd[tarefaConcluidaId]
+                atualizarBdConluido()
         elif concluiu == "2":
             verificacao = False
         else:
@@ -59,7 +75,7 @@ def listarTarefas():
             continue
 
 def listarTarefasConcluida():
-    for x in bancoDeDadosTarefasConcluidas:
+    for x in bdTarefasConcluida:
         print(x)
     print("1 - Deseja retorna alguma tarefa para as não concluidas?")
     print("2 - Deseja adicionar novamente uma tarefa que ja foi adicionada anteriormente?")
@@ -80,7 +96,7 @@ def listarTarefasConcluida():
 def retornaTarefa():
     print( 10* "__")
     print("escolha a tarefa pelo o id: ")
-    for y, x in enumerate(bancoDeDadosTarefasConcluidas):
+    for y, x in enumerate(bdTarefasConcluida):
         print(f" id {y + 1} - {x}")
     escolha = input("Digite aqui o id: ")
     print(15* "__")
@@ -89,9 +105,9 @@ def retornaTarefa():
         escolha -= 1 
         """Esse "1" foi adicionado anteriormnte e agora esta sendo retirado afim de ficar 
         visualmente  mais atrativo ao usuario e o id começar em 1 ao inves de 0 """
-        if escolha <= len(bancoDeDadosTarefasConcluidas):
-            bd.append(bancoDeDadosTarefasConcluidas[escolha])
-            del bancoDeDadosTarefasConcluidas[escolha]
+        if escolha <= len(bdTarefasConcluida):
+            bd.append(bdTarefasConcluida[escolha])
+            del bdTarefasConcluida[escolha]
             return
     except:
         print("Digite uma opção valida")
@@ -99,13 +115,13 @@ def retornaTarefa():
     
 def adicionarTarefaNovamente(): 
     print("Qual tarefa você quer adicionar novamente?")
-    for y, x in enumerate(bancoDeDadosTarefasConcluidas):
+    for y, x in enumerate(bdTarefasConcluida):
         print(f" id {y + 1} - {x}")
     escolha = input("Digite aqui o id: ")
     print(15* "__")
     try:
         escolha = int(escolha)
-        bd.append(bancoDeDadosTarefasConcluidas[escolha])
+        bd.append(bdTarefasConcluida[escolha])
     except:
         print("Digite um valor valido")
 
@@ -185,7 +201,8 @@ while condicao:
     #if responsavel em finalizar 
     elif opcao == "6":
         print("Tem certeza que quer sair mesmo?")
-        escolha = input("S - sim | N - não")
+        print("S - sim | N - não")
+        escolha = input()
         if escolha == "S" or escolha == "s":
             condicao = False
             print("Saindo...")
